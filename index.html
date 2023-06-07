@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="dummy.css">
+    
+</head>
+
+<body>
+    <nav>
+        <div class="main-nav container flex">
+           <div class="movielogoname">
+            <a href="#" onclick="reload()" class="company-logo"">
+                <img src="Frame 3.png" >
+            </a> <div class="Movielogo-text"> Movies</div> </div>
+           
+            <div class="search-bar" flex>
+                <input  id="search-text" type="text" class="movie-name" placeholder="Quick Search">
+                <button id="search-button" class="search-button">Search</button>
+               
+            </div>
+        </div>
+    </nav>
+    <div class="nav-links">
+        <ul class="list">
+            <li class="hover-nav-links" id="searchresults">Search Results</li>
+            <li class="hover-nav-links" id="allteam">All Team</li>
+            <li class="hover-nav-links" id="core">Core </li>
+            <li class="hover-nav-links" id="developers">Developers</li>
+            <li class="hover-nav-links" id="Designers">Designers</li>
+            <li class="hover-nav-links"id="mentors">Mentors</li>
+        <li class="hover-nav-links"><button id="add"> +ADD</button></li>
+
+
+
+        </ul>
+        
+    </div>
+    <main>
+        <div class="cards-container flex container" id="cards-container"></div>
+    </main>
+    <template id="template-movie-card">
+            
+        <div class="card">
+            <div class="card-header">
+                <img src="https://i.insider.com/61d775e137afc20019ac9849?width=700" alt="" id="movie-img">
+                
+                <h3 id="movie-title">This is attack on Titan</h3>
+               
+            </div>
+        </div>
+    
+</template>
+<script>
+    const imgurl ="https://image.tmdb.org/t/p/original";
+    const API_KEY="177dd684f60f28a86707fe911c2445ec";
+    const url="https://api.themoviedb.org/3/search/movie?query=";
+    
+      window.addEventListener("load",()=>fetchmovie("Murder"));
+      function reload(){
+        window.location.reload();
+      }
+        async function fetchmovie(query){
+            const res =await fetch(`${url}${query}&api_key=${API_KEY}`);
+            const data=await res.json();
+            console.log(data.results);
+            bindData(data.results);
+
+
+        }/*This function binds our data and creates copies of templates*/
+        function bindData(results){
+            const cardsContainer =document.getElementById("cards-container");
+            const movieCardTemplate = document.getElementById("template-movie-card");
+
+            cardsContainer.innerHTML="";
+            
+            /*This ensures us that if 100 items are filled and again you call api then after that 100 itmes again 100 items add*/
+            results.forEach((results)=>{
+                if(!results.backdrop_path)return;
+                const cardClone =movieCardTemplate.content.cloneNode(true);
+                /*deep cloning*/
+                fillDataInCard(cardClone,results);
+
+                cardsContainer.appendChild(cardClone);
+            });
+
+
+        }
+        function fillDataInCard(cardClone,results){
+            const movieimg=cardClone.querySelector('#movie-img');
+            const movieTitle=cardClone.querySelector('#movie-title');
+            movieimg.src=`${imgurl}${results.backdrop_path}`;
+
+            movieTitle.innerHTML=results.title;
+
+
+        }
+const searchButton = document.getElementById('search-button');
+const searchtxt = document.getElementById('search-text');
+
+searchButton.addEventListener('click',()=>{
+    const query=searchtxt.value;
+    if(!query)
+    return;
+    fetchmovie(query);
+
+});
+        
+
+</script>
+</body>
+
+</html>
+
